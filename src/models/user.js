@@ -54,7 +54,8 @@ const userSchema = new mongoose.Schema({
 });
 
 userSchema.methods.getAuthenticationToken = async function () {
-    console.log(process.env.JWT_SECRET);
+    const user = await User.findOne({ email: this.email });
+    if (user) throw new Error('Email already registered!');
     const token = jwt.sign({ _id: this._id.toString() }, process.env.JWT_SECRET);
     this.tokens.push({ token });
     this.save();
